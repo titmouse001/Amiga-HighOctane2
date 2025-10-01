@@ -1,0 +1,30 @@
+#ifndef _MENU_H_
+#define _MENU_H_
+
+/*--------------------------------------*/
+/* COMMON */
+#define TRUE	(1)
+#define FALSE 	(0)
+
+#define max(a,b)  (((a) > (b)) ? (a) : (b))
+#define min(a,b)  (((a) < (b)) ? (a) : (b))
+
+#define abs(i) ((i < 0L) ? -i : i)
+
+
+/*--------------------------------------*/
+
+
+
+/*--------------------------------------*/
+/*
+long Menu_Check(MenuT* m,long mousex,long mousey);
+long FindAngle64(long diffx,long diffy);
+void DoMenu(void);
+void ControllCar(void);
+long MenuSystem(void);
+*/
+/*-------------------------------------------------------------------------------------*/
+
+
+#endif

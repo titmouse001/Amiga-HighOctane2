@@ -1,0 +1,132 @@
+MAX_LOADEED_MAPS	EQU	(10)
+;--------------------------------------------------
+;map/hit/arrow data are now joined together in one file. (gives faster loading times)
+MAPHEADER_WIDTH		EQU	(20)	;for MAP_OFFSET
+MAPHEADER_HEIGHT	EQU	(22)
+MAPHEADER_DATA		EQU	(24)
+MAP_OFFSET		EQU	0
+;-----------------------------------------------------
+;next line is alloc mem, for blocks that change
+MAPDATA_HITSIZE_EXTRA	EQU	((1024*64)/128)	;use 64k ...128bytes per icon
+
+MAPDATA_MAPSIZE		EQU	((128*128*2)+MAPHEADER_DATA)
+
+;NOTE: I COULD JUST USE/STORE 1 BITPLANE FOR REDRAW STUFF, AS LONG AS I DONT
+;NEED MORE COLOURS LATER (skid only uses one colour)
+STATIC_BLOCKS		EQU	(59*20)
+MAPDATA_ARWSIZE		EQU	(128*128)
+MAX_BLOCKS		EQU	(STATIC_BLOCKS+MAPDATA_HITSIZE_EXTRA)
+EXTRA_BLOCKS_START	EQU	(STATIC_BLOCKS)	
+MAPDATA_HITSIZE		EQU	(STATIC_BLOCKS) ;byte data
+;-----------------------------------------------------
+ARW_OFFSET		EQU	MAPDATA_MAPSIZE
+HIT_OFFSET		EQU	MAPDATA_MAPSIZE+MAPDATA_ARWSIZE
+;-----------------------------------------------------
+
+
+;;STATUS_HITCAR1		EQU	%00000001
+;;STATUS_HITCAR2		EQU	%00000010
+;;STATUS_HITCAR3		EQU	%00000100
+;;STATUS_HITCAR4		EQU	%00001000
+;;STATUS_HITMASK		EQU	%00001111
+;;STATUS_OTHERMASK	EQU	%11110000
+
+JOY_UP			EQU  	%0000001
+JOY_DOWN   		EQU  	%0000010
+JOY_LEFT			EQU  	%0000100
+JOY_RIGHT		EQU 	%0001000
+JOY_BUT1			EQU 	%0010000
+JOY_TAPLEFT		EQU  	%0100000
+JOY_TAPRIGHT	EQU 	%1000000
+
+
+TOTAL_CAR_FRAMES	EQU	64	;72
+
+MAX_CARS		EQU	4
+MAX_ALLOC_BLOCKS	EQU	64
+MAX_BLAST_PIXELS	EQU	16
+MAX_EXPLOSIONS		EQU	16
+MAX_ROCKETS		EQU	16
+ANIM_SPEED		EQU	4
+BLOCK_SIZE		EQU	16
+ROCKET_RATE		EQU	8
+CAMERA_FOLLOW_ROCKET	EQU	0
+CAMERA_FOLLOW_CAR	EQU	1
+
+; *** TAGS FOR LOCK ON OBJECTS ****\
+GUN_TURRET		EQU %01000000  ;<<<Large numbers used for lock on Items.
+TANK			EQU %10000000  ;<<<See "Anim.dat"(uses bytes)
+;MGUN			EQU %11000000  ;<<<These are filtered out later.
+
+FAKE_ANIM_ZERO		EQU	31
+;----------------------------------------
+;for "angles72.dat" file
+ANGLE_ROTSIZE		equ	6	
+ANGLETABLESIZE		equ	1<<ANGLE_ROTSIZE	
+
+;-----------------------------------------
+
+; *** CAR ID's ***
+CAR_PLR1		EQU	1
+CAR_PLR2		EQU	2
+CAR_PLR3		EQU	3
+CAR_PLR4		EQU	4
+CAR_CPU			EQU	0
+;------------------------------------
+WOBBLE0			EQU	0
+WOBBLE1			EQU	16
+WOBBLE2			EQU	32
+WOBBLE3			EQU	48
+;------------------------------------
+
+;*****************************
+;*** SOME MAP ICON NUMBERS ***
+;*****************************
+
+MAPICON_CLEAR_ROAD	EQU 	0
+
+SOMETHINGVERYHARD	equ 	22
+
+
+;*****************************
+;*** COLLISION MAP NUMBERS ***
+;*****************************
+
+TERRAIN_ROAD  		EQU	0
+TERRAIN_SOLID 		EQU	1
+TERRAIN_CORNER		EQU	2
+TERRAIN_GRASS		EQU	3
+TERRAIN_CONE 		EQU	4
+TERRAIN_MINE  		EQU	5
+TERRAIN_FENCE 		EQU	6
+TERRAIN_PICKUP		EQU	7
+TERRAIN_PLANTS		EQU	8 ;?????
+TERRAIN_SAND 		EQU	9 
+TERRAIN_MUD  		EQU	10
+TERRAIN_BUMBPY 		EQU	11
+TERRAIN_ROCKS		EQU	12;?????
+TERRAIN_OIL 		EQU	13
+TERRAIN_WATER 		EQU	14
+TERRAIN_LAMP  		EQU	15
+TERRAIN_SPIKE0		EQU	16
+TERRAIN_SPIKE1 		EQU	17
+TERRAIN_ANIM		EQU	18;?????
+
+TERRAIN_CAR01		EQU	100
+TERRAIN_CAR02		EQU	101
+TERRAIN_CAR03		EQU	102
+TERRAIN_CAR04		EQU	103
+TERRAIN_CAR05		EQU	104
+
+;-------------------------------------
+; *** EXPLOSION ***
+
+EXP_RATE	EQU	1	(0=50fps,1=25fps,2=12fps...)
+EXP_FRAMES	EQU	10
+
+EXP01	EQU	0
+EXP02	EQU	(EXP01+EXP_FRAMES)<<EXP_RATE
+EXP03	EQU	(EXP02+EXP_FRAMES)<<EXP_RATE
+EXP04	EQU	(EXP03+EXP_FRAMES)<<EXP_RATE
+
+;-------------------------------------------------

@@ -1,0 +1,17 @@
+l	EQU	JOY_LEFT  
+r	EQU	JOY_RIGHT 
+
+	dc.w 	r,l,l,l,l,l,l,l,l,l,l,l,l,l,l,l,l,l
+	dc.w 	l,l,l,l,l,l,l,l,l,l,l,l,l,l,l,l,l,l
+	dc.w	l,r,r,r,r,r,r,r,r,r,r,r,r,r,r,r,r,r
+	dc.w	r,r,r,r,r,r,r,r,r,r,r,r,r,r,r,r,r
+	dc.w	JOY_RIGHT|JOY_TAPRIGHT
+_CarTurnToFace:	;extern for c
+CarTurnToFace:	dc.w	0
+	dc.w	JOY_LEFT|JOY_TAPLEFT
+	dc.w	l,l,l,l,l,l,l,l,l,l,l,l,l,l,l,l,l
+	dc.w	l,l,l,l,l,l,l,l,l,l,l,l,l,l,l,l,l,r
+	dc.w	r,r,r,r,r,r,r,r,r,r,r,r,r,r,r,r,r,r
+	dc.w	r,r,r,r,r,r,r,r,r,r,r,r,r,r,r,r,r,l
+
+	

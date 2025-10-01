@@ -1,0 +1,170 @@
+#include <stdio.h>
+#include <string.h>
+
+
+#define MAX_FILES	(1024)
+
+#define	BUF_SIZE	(1024*1024)
+
+
+typedef struct
+{
+	char	Filename[64];
+	char	MiscData[256];
+	long	U8Offset;
+	long	U8Size;
+/*	long	DatOffset;
+	long	TabOffset;
+*/
+} TableT;
+
+
+TableT	Table[MAX_FILES];
+long	TableNum;
+char	Buffer[BUF_SIZE];
+char	Basename[64];
+
+
+
+main ( int argc, char* argv[] )
+{
+	char	tempname[64];
+
+	if ( argc != 2 )
+	{
+		printf ( "\n  reads 'file.txt', produces 'file.sam', 'file.ci''\n" );
+		exit(1);
+	}
+
+	strcpy ( Basename, argv[1] );
+
+	sprintf ( tempname, "%s.txt", Basename );
+	LoadTableFile ( tempname );
+
+	sprintf ( tempname, "%s.sam", Basename );
+	WriteU8Files ( tempname );
+
+	sprintf ( tempname, "%s.ci", Basename );
+	WriteTableFile ( tempname );
+
+}
+
+
+
+void
+LoadTableFile ( char* filename )
+{
+	FILE* File;
+	char	Line[256];
+	char	Name[256];
+	char	Extra[256];
+
+
+	TableNum = 0;
+
+	File = fopen ( filename, "rt" );
+	if ( File == NULL )
+	{
+		printf ( "Error: cannot open '%s'\n", filename );
+		exit(1);
+	}
+
+	while ( fgets ( Line, 256, File ) )
+	{
+		if ( Line[0] == '\n' || Line[0] == '#' )
+			continue;
+
+//		if ( sscanf ( Line, "{\"%[^\"]\",%[^\n]\n", Name, Extra ) != 2)
+		if ( sscanf ( Line, "{ \"%[^\"]\"}%[^\n]\n", Name, Extra ) != 2)
+		{
+			printf ( "Warning: Unrecognised line: %s",  Line );
+			continue;
+		}
+
+//		printf ( "processing file %s", Line );
+
+		strcpy ( Table[TableNum].Filename, Name );
+		strcpy ( Table[TableNum].MiscData, Extra );
+
+		TableNum++;
+	}
+
+	fclose ( File );
+
+}
+
+
+
+void
+WriteU8Files (char* filename)
+{
+	FILE*	OutFile;
+	FILE*	InFile;
+	char	temp[256];
+	long	i,Size;
+
+
+	OutFile = fopen ( filename, "wb" );
+
+	if ( OutFile == NULL )
+	{
+		printf ( "error: cannot create file\n" );
+		exit(1);
+	}
+
+	for (i=0; i<TableNum; i++)
+	{
+		Table[i].U8Offset = ftell ( OutFile );
+
+		sprintf ( temp, "%s.sam", Table[i].Filename );
+		InFile = fopen ( temp, "rb" );
+		if ( InFile == NULL )
+		{
+			printf ( "Error: no such file '%s'\n", temp );
+			exit(1);
+		}
+		Size = fread ( Buffer, 1, BUF_SIZE, InFile );
+		fwrite ( Buffer, 1, Size, OutFile );
+		fclose ( InFile );
+
+		Table[i].U8Size = Size;
+
+
+		printf ( "." );
+		fflush ( stdout );
+	}
+
+	fclose ( OutFile );
+
+	printf ( "!\n" );
+}
+
+
+
+void
+WriteTableFile ( char* Filename )
+{
+	FILE* File;
+	short	i;
+
+
+	File = fopen ( Filename, "wt" );
+	if ( File == NULL )
+	{
+		printf ( "Error: cannot create '%s'\n", Filename );
+		exit(1);
+	}
+
+//	fprintf ( File, "\t%s\n", TableNum );
+
+	for (i=0; i<TableNum; i++)
+	{
+//		fprintf ( File, "\t{ %d, %d, %s\n", Table[i].DatOffset, Table[i].TabOffset, Table[i].MiscData );
+//		fprintf ( File, "\t{ %d, %d %s\n", Table[i].U8Offset, Table[i].U8Size ,Table[i].MiscData );
+		fprintf ( File, "SAM_SIZE%d\t EQU\t%6d\t %s\n",i+1, Table[i].U8Size ,Table[i].MiscData );
+
+	}
+
+	fclose ( File );
+
+}

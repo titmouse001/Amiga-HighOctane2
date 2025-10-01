@@ -1,0 +1,1 @@
+copy mod* ..\..\data\mods

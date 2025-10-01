@@ -1,0 +1,59 @@
+;	*****************
+;	*** MAIN LOOP ***
+;	*****************
+
+MainGameLoop:
+	;;move.l #0,debugwaittime
+	bsr	ScanKeys
+	bsr	Joy0
+	bsr	ProcessCars_CPU
+	bsr	ProcessCars_Travel
+	bsr	ProcessCars_Crash
+	bsr	CamraView
+	;---------------------------------
+	
+	move.l	StoreBlocksLoc1,a5
+	add.l	#(BLOCKS_X*2)*SIZE_WORD+(SIZE_WORD*2),a5	;OVERRUN	
+	move.l	LogicScreenBuffer,d6
+	add.l	#((BLOCK_SIZE*2)/8)+(((512/8)*BITPLANES)*(BLOCK_SIZE*2)),d6 
+
+	move.w	Scene_Anim_Speed,d0
+	ror.w	#1,d0
+	bcs.s	.DoAnim
+	move.w	d0,Scene_Anim_Speed
+	bsr	BlitBlocks	;IN a5,a6
+	bra.s	.NoAnim
+.DoAnim
+	move.w	#%100,Scene_Anim_Speed
+	bsr	BlitAnimateBlocks	;IN a5,46
+.NoAnim
+
+	;---------------------------------
+	;move.w	#$fff,$dff180
+	Bsr	Process_Terrian
+	bsr	Process_Sounds
+	Bsr	DisplaySkids
+	
+	moveq.l		#-OVERRUN,d6	   ; really added later,
+	move.l		d6,d7    ; hidden offscreen overrun.
+	bsr	DisplayCars
+	bsr	DrawExplosions
+	bsr	DrawRockets
+	bsr	DebugStuff
+	
+	bsr	ProcessWaitingSounds
+	
+	WAITSCREEN
+
+	bsr 	ProcessSound_MuteLooping
+	;move.w	#$0,$dff180
+	bsr	HardWare_Scroll
+	
+	tst.w	QuitCurrentScreen
+	bne.s	ExitPlayScreen
+
+	bra	MainGameLoop
+
+ExitPlayScreen:
+	move.w	#0,QuitCurrentScreen
+	rts
